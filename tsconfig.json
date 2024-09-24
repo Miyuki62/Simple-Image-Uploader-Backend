@@ -1,5 +1,4 @@
 {
-  "include": ["src/**/*"],
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
@@ -8,5 +7,6 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./dist"
-  }
+  },
+  "include": ["db/**/*", "server.ts", "types.d.ts"]
 }

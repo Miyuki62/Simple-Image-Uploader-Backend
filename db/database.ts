@@ -22,7 +22,7 @@ async function applySchemaValidation(db: mongodb.Db) {
   const jsonSchema = {
     $jsonSchema: {
       bsonType: "object",
-      required: ["name", "url"],
+      required: ["name", "image"],
       additionalProperties: false,
       properties: {
         _id: {},
@@ -30,9 +30,19 @@ async function applySchemaValidation(db: mongodb.Db) {
           bsonType: "string",
           description: "'name' is required and is a string",
         },
-        url: {
-          bsonType: "string",
-          description: "'url' is required and is a string",
+        image: {
+          bsonType: "object",
+          required: ["publicId", "url"],
+          properties: {
+            publicId: {
+              bsonType: "string",
+              description: "'publicId' is required and is a string",
+            },
+            url: {
+              bsonType: "string",
+              description: "'url' is required and is a string",
+            },
+          },
         },
       },
     },
@@ -44,9 +54,11 @@ async function applySchemaValidation(db: mongodb.Db) {
       collMod: "images",
       validator: jsonSchema,
     })
-    .catch(async (error: mongodb.MongoServerError) => {
+    .catch(async (error: any) => {
       if (error.codeName === "NamespaceNotFound") {
         await db.createCollection("images", { validator: jsonSchema });
+      } else {
+        throw error;
       }
     });
 }

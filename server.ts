@@ -21,7 +21,7 @@ connectToDatabase(ATLAS_URI)
     const app = express();
     app.use(cors());
 
-    app.use("/images", imageRouter);
+    app.use("/", imageRouter);
     // start the Express server
     app.listen(5200, () => {
       console.log(`Server running at http://localhost:5200...`);

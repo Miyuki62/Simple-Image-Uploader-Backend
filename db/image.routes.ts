@@ -16,7 +16,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // GET all images
-imageRouter.get("/", async (_req, res) => {
+imageRouter.get("/list", async (_req, res) => {
   try {
     const images = await collections?.images?.find({}).toArray();
     res.status(200).send(images);
@@ -28,7 +28,7 @@ imageRouter.get("/", async (_req, res) => {
 });
 
 // GET a single image by ID
-imageRouter.get("/:id", async (req, res) => {
+imageRouter.get("/download/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: new ObjectId(id) };
@@ -45,7 +45,7 @@ imageRouter.get("/:id", async (req, res) => {
 });
 
 // POST to upload a new image
-imageRouter.post("/", upload.single("file"), async (req, res) => {
+imageRouter.post("/upload", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
   }
@@ -78,30 +78,8 @@ imageRouter.post("/", upload.single("file"), async (req, res) => {
   }
 });
 
-// PUT to update an image by ID
-imageRouter.put("/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const image = req.body;
-    const query = { _id: new ObjectId(id) };
-    const result = await collections?.images?.updateOne(query, { $set: image });
-
-    if (result && result.matchedCount) {
-      res.status(200).send(`Updated an image: ID ${id}.`);
-    } else if (!result?.matchedCount) {
-      res.status(404).send(`Failed to find an image: ID ${id}`);
-    } else {
-      res.status(304).send(`Failed to update an image: ID ${id}`);
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    console.error(message);
-    res.status(400).send(message);
-  }
-});
-
 // DELETE an image by ID
-imageRouter.delete("/:id", async (req, res) => {
+imageRouter.delete("/delete/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: new ObjectId(id) };
